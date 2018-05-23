@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - nearit_sdk (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Pods/.symlinks/flutter/ios-release`)
+  - nearit_sdk (from `Pods/.symlinks/plugins/nearit_sdk/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Pods/.symlinks/flutter/ios-release
+  nearit_sdk:
+    :path: Pods/.symlinks/plugins/nearit_sdk/ios
+
+SPEC CHECKSUMS:
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  nearit_sdk: 58a1f4fc24e8e6ba7e0d4b097ba54e84966ca183
+
+PODFILE CHECKSUM: 13dcf421f4da2e937a57e8ba760ed880beae536f
+
+COCOAPODS: 1.5.2
