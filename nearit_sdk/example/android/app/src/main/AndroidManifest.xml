@@ -35,5 +35,21 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="near_api_key"
+            android:value="@string/nearit_api_key" />
+
+        <activity
+            android:name="it.near.sdk.utils.device.NearTestEnrollActivity"
+            android:theme="@style/NearTestEnrollStyle">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/nearit_test_devices_scheme" />
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest>
