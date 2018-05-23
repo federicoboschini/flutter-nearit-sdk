@@ -10,33 +10,70 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _profileId = 'Unknown';
+
+  final myController = new TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is disposed
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   initState() {
     super.initState();
-    initPlatformState();
+    getProfileId();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+  getProfileId() async {
+    String profileId;
     try {
-      platformVersion = await NearitSdk.platformVersion;
+      profileId = await NearitSdk.getProfileId();
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      profileId = 'Failed to get profileId.';
     }
+    updateProfileId(profileId);
+  }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted)
-      return;
+  resetProfileId() async {
+    String profileId;
+    try {
+      profileId = await NearitSdk.resetProfileId();
+    } on PlatformException {
+      profileId = 'Failed to get profileId.';
+    }
+    updateProfileId(profileId);
+  }
+
+  setProfileId() {
+    if (myController.text != null) {
+      NearitSdk.setProfileId(myController.text);
+      getProfileId();
+    }
+  }
+
+  updateProfileId(String profileId) {
+    if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _profileId = profileId;
     });
+  }
+
+  getInbox() {
+    NearitSdk
+        .getInbox()
+        .then((inbox) => print("Inbox: " + inbox.toString()))
+        .catchError((error) => print(error));
+  }
+
+  getCoupons() {
+    NearitSdk
+        .getCoupons()
+        .then((copuns) => print("Coupons: " + copuns.toString()))
+        .catchError((error) => print(error));
   }
 
   @override
@@ -44,10 +81,73 @@ class _MyAppState extends State<MyApp> {
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text('Plugin example app'),
+          title: new Text('NearItSDK Plugin sample app'),
         ),
-        body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+        body: new Container(
+          padding: const EdgeInsets.all(32.0),
+          child: new Flex(
+            direction: Axis.vertical,
+            children: [
+              new Center(
+                  child: new Column(
+                children: [
+                  new Text('ProfileId: $_profileId'),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new RaisedButton(
+                      child: const Text('START RADAR'),
+                      onPressed: NearitSdk.startRadar,
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new RaisedButton(
+                        child: const Text('STOP RADAR'),
+                        onPressed: NearitSdk.stopRadar),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new RaisedButton(
+                        child: const Text('RESET PROFILE ID'),
+                        onPressed: resetProfileId),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new RaisedButton(
+                        child: const Text('GET INBOX'), onPressed: getInbox),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new RaisedButton(
+                        child: const Text('GET COUPONS'),
+                        onPressed: getCoupons),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(top: 5.0),
+                    child: new Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        new Flexible(
+                          child: new TextField(
+                            controller: myController,
+                            decoration: new InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Please, enter a profileId'),
+                          ),
+                        ),
+                        new Padding(
+                          padding: new EdgeInsets.only(left: 5.0),
+                          child: new RaisedButton(
+                              child: const Text('SET PROFILE ID'),
+                              onPressed: setProfileId),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              )),
+            ],
+          ),
         ),
       ),
     );
