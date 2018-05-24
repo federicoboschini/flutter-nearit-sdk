@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nearit_sdk/nearit_sdk.dart';
+import 'package:nearit_sdk/objects/Coupon.dart';
 
 void main() => runApp(new MyApp());
 
@@ -69,11 +70,19 @@ class _MyAppState extends State<MyApp> {
         .catchError((error) => print(error));
   }
 
-  getCoupons() {
-    NearitSdk
-        .getCoupons()
-        .then((copuns) => print("Coupons: " + copuns.toString()))
-        .catchError((error) => print(error));
+  getCoupons() async {
+    List<Coupon> couponList;
+    try {
+      couponList = await NearitSdk.getCoupons();
+    } on PlatformException {
+      print("Failed parsing coupons");
+    }
+
+    print(couponList[0].image.fullSize);
+  }
+
+  triggerInAppEvent() async {
+    NearitSdk.triggerInAppEvent("in_app_event_test");
   }
 
   @override
@@ -143,6 +152,12 @@ class _MyAppState extends State<MyApp> {
                         )
                       ],
                     ),
+                  ),
+                  new Padding(
+                      padding: new EdgeInsets.only(top: 5.0),
+                      child: new RaisedButton(
+                          child: const Text('TRIGGER EVENT'),
+                          onPressed: triggerInAppEvent),
                   )
                 ],
               )),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'dart:collection';
 import 'package:nearit_sdk/objects/Coupon.dart';
 import 'package:nearit_sdk/objects/InboxItem.dart';
 
@@ -31,8 +32,14 @@ class NearitSdk {
 
   static Future<List<Coupon>> getCoupons() async {
     final List<dynamic> data = await _channel.invokeMethod('getCoupons');
-    final List<Coupon> coupons = data.cast<Coupon>().toList();
-    return coupons;
+    final List<LinkedHashMap> castedData = data.cast<LinkedHashMap>().toList();
+
+    final List<Coupon> couponList = new List();
+    for (LinkedHashMap c in castedData) {
+      Coupon co = Coupon(c);
+      couponList.add(co);
+    }
+    return couponList;
   }
 
   static Future<List<InboxItem>> getInbox() async {
