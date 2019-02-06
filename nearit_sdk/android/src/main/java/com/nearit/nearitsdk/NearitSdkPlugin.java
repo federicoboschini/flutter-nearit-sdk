@@ -290,9 +290,17 @@ public class NearitSdkPlugin implements MethodCallHandler {
     }
 
     private void sendTracking(final MethodCall call) {
-        TrackingInfo trackingInfo = call.argument(TRACKING_INFO);
+        HashMap<String, Object> bundledTrackingInfo = call.argument(TRACKING_INFO);
+        TrackingInfo trackingInfo = null;
+        if (bundledTrackingInfo != null) {
+            trackingInfo = Utils.unBundleTrackingInfo(bundledTrackingInfo);
+        }
         String event = call.argument(TRACKING_EVENT);
-        nearItManager.sendTracking(trackingInfo, event);
+        if (trackingInfo != null) {
+            nearItManager.sendTracking(trackingInfo, event);
+        } else {
+            Log.e(TAG, "NearIT :: Can\'t send tracking info. Error while unbundling it.");
+        }
     }
 
     private void enrollTestDevice(final MethodCall call, final Result result) {
