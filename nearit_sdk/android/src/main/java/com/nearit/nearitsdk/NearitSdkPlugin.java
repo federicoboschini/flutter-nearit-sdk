@@ -19,7 +19,7 @@ import it.near.sdk.reactions.Event;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.recipes.NearITEventHandler;
-import it.near.sdk.recipes.foreground.ProximityListener;
+
 import it.near.sdk.recipes.inbox.InboxManager;
 import it.near.sdk.recipes.inbox.model.InboxItem;
 import it.near.sdk.trackings.TrackingInfo;
@@ -36,9 +36,6 @@ public class NearitSdkPlugin implements MethodCallHandler {
         private static final String PROFILE_ID = "profileId";
         private static final String USER_DATA_KEY = "userDataKey";
         private static final String USER_DATA_VALUE = "userDataValue";
-        private static final String ICON_RESOURCE = "notificationIconRes";
-        private static final String PROXIMITY_LISTENER = "proximityListener";
-        private static final String EVENT = "event";
 
         private static final String START_RADAR = "startRadar";
         private static final String STOP_RADAR = "stopRadar";
@@ -57,10 +54,6 @@ public class NearitSdkPlugin implements MethodCallHandler {
         private static final String SET_USER_DATA = "setUserData";
         private static final String SET_USER_DATA_MULTI = "setUserDataMulti";
         private static final String SET_BATCH_USER_DATA = "setBatchUserData";
-        private static final String SET_PUSH_NOTIFICATION_ICON = "setPushNotificationIcon";
-        private static final String SET_PROXIMITY_NOTIFICATION_ICON = "setProximityNotificationIcon";
-        private static final String ADD_PROXIMITY_LISTENER = "addProximityListener";
-        private static final String REMOVE_PROXIMITY_LISTENER = "removeProximityListener";
 
     private NearItManager nearItManager = NearItManager.getInstance();
 
@@ -120,20 +113,8 @@ public class NearitSdkPlugin implements MethodCallHandler {
             case ENROLL_TEST_DEVICE:
                 enrollTestDevice(call, result);
                 break;
-            case ADD_PROXIMITY_LISTENER:
-                addProximityListener(call);
-                break;
-            case REMOVE_PROXIMITY_LISTENER:
-                removeProximityListener(call);
-                break;
             case DISABLE_DEFAULT_RANGING_NOTIF:
                 disableDefaultRangingNotifications();
-                break;
-            case SET_PROXIMITY_NOTIFICATION_ICON:
-                setProximityNotificationIcon(call);
-                break;
-            case SET_PUSH_NOTIFICATION_ICON:
-                setPushNotificationIcon(call);
                 break;
             default:
                 result.notImplemented();
@@ -283,26 +264,6 @@ public class NearitSdkPlugin implements MethodCallHandler {
                 result.error("Test device enrollment Error", error, null);
             }
         });
-    }
-
-    private void removeProximityListener(final MethodCall call) {
-        ProximityListener proximityListener = call.argument(PROXIMITY_LISTENER);
-        nearItManager.removeProximityListener(proximityListener);
-    }
-
-    private void addProximityListener(final MethodCall call) {
-        ProximityListener proximityListener = call.argument(PROXIMITY_LISTENER);
-        nearItManager.addProximityListener(proximityListener);
-    }
-
-    private void setProximityNotificationIcon(final MethodCall call) {
-        int iconRes = call.argument(ICON_RESOURCE);
-        nearItManager.setProximityNotificationIcon(iconRes);
-    }
-
-    private void setPushNotificationIcon(final MethodCall call) {
-        int iconRes = call.argument(ICON_RESOURCE);
-        nearItManager.setPushNotificationIcon(iconRes);
     }
 
     private void disableDefaultRangingNotifications() {
