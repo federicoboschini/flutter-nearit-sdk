@@ -34,5 +34,5 @@ android {
 }
 
 dependencies {
-    implementation 'it.near.sdk:nearit:2.9.0'
+    implementation 'it.near.sdk:nearit:2.10.9'
 }
