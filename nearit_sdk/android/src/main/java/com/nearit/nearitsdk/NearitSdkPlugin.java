@@ -19,9 +19,8 @@ import it.near.sdk.reactions.Event;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.recipes.NearITEventHandler;
-
-import it.near.sdk.recipes.inbox.InboxManager;
-import it.near.sdk.recipes.inbox.model.InboxItem;
+import it.near.sdk.recipes.inbox.NotificationHistoryManager;
+import it.near.sdk.recipes.inbox.model.HistoryItem;
 import it.near.sdk.trackings.TrackingInfo;
 
 /**
@@ -40,7 +39,7 @@ public class NearitSdkPlugin implements MethodCallHandler {
         private static final String START_RADAR = "startRadar";
         private static final String STOP_RADAR = "stopRadar";
         private static final String GET_COUPONS = "getCoupons";
-        private static final String GET_INBOX = "getInbox";
+        private static final String GET_NOTIFICATION_HISTORY = "getNotificationHistory";
         private static final String TRIGGER_IN_APP_EVENT = "triggerInAppEvent";
         private static final String DISABLE_DEFAULT_RANGING_NOTIF = "disableDefaultRangingNotifications";
         private static final String ENROLL_TEST_DEVICE = "enrollTestDevice";
@@ -83,8 +82,8 @@ public class NearitSdkPlugin implements MethodCallHandler {
             case GET_COUPONS:
                 getCoupons(result);
                 break;
-            case GET_INBOX:
-                getInbox(result);
+            case GET_NOTIFICATION_HISTORY:
+                getNotificationHistory(result);
                 break;
             case SET_USER_DATA:
                 setUserData(call);
@@ -176,16 +175,20 @@ public class NearitSdkPlugin implements MethodCallHandler {
         });
     }
 
-    private void getInbox(final Result result) {
-        nearItManager.getInbox(new InboxManager.OnInboxMessages() {
+    private void getNotificationHistory(final Result result) {
+        nearItManager.getHistory(new NotificationHistoryManager.OnNotificationHistoryListener() {
             @Override
-            public void onMessages(@NonNull List<InboxItem> inboxItemList) {
-                result.success(inboxItemList);
+            public void onNotifications(@NonNull List<HistoryItem> historyItemList) {
+                List<LinkedHashMap<String, Object>> list = new ArrayList<>();
+                for(HistoryItem item : historyItemList) {
+                    list.add(Utils.bundleHistoryItem(item));
+                }
+                result.success(list);
             }
 
             @Override
             public void onError(String error) {
-                result.error("Error loading Inbox", error, null);
+                result.error("Error loading Notification History", error, null);
             }
         });
     }
