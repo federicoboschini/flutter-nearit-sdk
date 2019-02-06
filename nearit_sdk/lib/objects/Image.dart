@@ -9,4 +9,5 @@ class Image {
 
   String get fullSize => _data['fullSize'];
   String get squareSize => _data['squareSize'];
+
 }

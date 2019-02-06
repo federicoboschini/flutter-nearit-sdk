@@ -1,13 +1,13 @@
+import 'dart:collection';
+
 class TrackingInfo {
-  final Map<dynamic, dynamic> _data;
+  Map<dynamic, dynamic> _data;
 
-  TrackingInfo._(this._data);
+  TrackingInfo(LinkedHashMap map) {
+    _data = map;
+  }
 
-  String get DELIVERY_ID => _data['DELIVERY_ID'];
   String get recipeId => _data['recipeId'];
 
-  @override
-  String toString() {
-    return '$runtimeType($_data)';
-  }
+  Map<String, String> get metadata => _data['metadata'];
 }
