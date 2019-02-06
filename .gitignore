@@ -4,3 +4,5 @@ nearit_sdk/example/android/app/src/main/res/values/secrets\.xml
 nearit_sdk/example/android/\.idea/
 
 nearit_sdk/android/\.idea/
+
+nearit_sdk/\.idea/workspace\.xml
