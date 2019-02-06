@@ -224,7 +224,11 @@ public class NearitSdkPlugin implements MethodCallHandler {
 
     private void triggerInAppEvent(final MethodCall call) {
         String key = call.argument(IN_APP_EVENT_KEY);
-        nearItManager.triggerInAppEvent(key);
+        if (key != null) {
+            nearItManager.triggerInAppEvent(key);
+        } else {
+            Log.e(TAG, "NearIT :: Can\'t trigger in-app-event. Key is null");
+        }
     }
 
     private void getOptOut(final Result result) {
