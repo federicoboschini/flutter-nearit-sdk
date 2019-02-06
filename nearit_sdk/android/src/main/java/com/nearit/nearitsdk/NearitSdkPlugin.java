@@ -144,7 +144,11 @@ public class NearitSdkPlugin implements MethodCallHandler {
 
     private void setProfileId(final MethodCall call) {
         String profileId = call.argument(PROFILE_ID);
-        nearItManager.setProfileId(profileId);
+        if (profileId != null) {
+            nearItManager.setProfileId(profileId);
+        } else {
+            Log.e(TAG, "NearIT :: Can\'t set profileId. Error while unbundling profileId.");
+        }
     }
 
     private void resetProfileId(final Result result) {
