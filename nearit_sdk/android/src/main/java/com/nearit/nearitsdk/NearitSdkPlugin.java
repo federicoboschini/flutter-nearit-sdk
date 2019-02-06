@@ -1,7 +1,11 @@
 package com.nearit.nearitsdk;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +31,8 @@ import it.near.sdk.trackings.TrackingInfo;
  * @author Federico Boschini
  */
 public class NearitSdkPlugin implements MethodCallHandler {
+
+        private static final String TAG = "NearItSdkPlugin";
 
         private static final String IN_APP_EVENT_KEY = "inAppEvent";
         private static final String DEVICE_NAME = "deviceName";
@@ -169,7 +175,11 @@ public class NearitSdkPlugin implements MethodCallHandler {
         nearItManager.getCoupons(new CouponListener() {
             @Override
             public void onCouponsDownloaded(List<Coupon> coupons) {
-                result.success(coupons);
+                List<LinkedHashMap<String, Object>> list = new ArrayList<>();
+                for(Coupon coupon : coupons) {
+                    list.add(Utils.bundleCoupon(coupon));
+                }
+                result.success(list);
             }
 
             @Override
