@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'dart:collection';
 import 'package:nearit_sdk/objects/Coupon.dart';
-import 'package:nearit_sdk/objects/InboxItem.dart';
+import 'package:nearit_sdk/objects/HistoryItem.dart';
+import 'package:nearit_sdk/objects/TrackingInfo.dart';
 
 class NearitSdk {
   static const MethodChannel _channel =
@@ -33,18 +34,23 @@ class NearitSdk {
   static Future<List<Coupon>> getCoupons() async {
     final List<dynamic> data = await _channel.invokeMethod('getCoupons');
     final List<LinkedHashMap> castedData = data.cast<LinkedHashMap>().toList();
-
     final List<Coupon> couponList = new List();
-    for (LinkedHashMap c in castedData) {
-      Coupon co = Coupon(c);
-      couponList.add(co);
+    for (LinkedHashMap map in castedData) {
+      Coupon coupon = Coupon(map);
+      couponList.add(coupon);
     }
     return couponList;
   }
 
-  static Future<List<InboxItem>> getInbox() async {
-    final List<dynamic> data = await _channel.invokeMethod('getInbox');
-    final List<InboxItem> inbox = data.cast<InboxItem>().toList();
+  static Future<List<HistoryItem>> getNotificationHistory() async {
+    final List<dynamic> data =
+        await _channel.invokeMethod('getNotificationHistory');
+    final List<LinkedHashMap> castedData = data.cast<LinkedHashMap>().toList();
+    final List<HistoryItem> inbox = new List();
+    for (LinkedHashMap map in castedData) {
+      HistoryItem item = HistoryItem(map);
+      inbox.add(item);
+    }
     return inbox;
   }
 
@@ -58,8 +64,8 @@ class NearitSdk {
   }
 
   static setUserBatchData(Map<String, Object> data) {
-    _channel.invokeMethod('setUserData',
-        <String, dynamic>{'userDataValue': data});
+    _channel
+        .invokeMethod('setUserData', <String, dynamic>{'userDataValue': data});
   }
 
   static triggerInAppEvent(String key) {
@@ -75,12 +81,18 @@ class NearitSdk {
     await _channel.invokeMethod('optOut');
   }
 
-  static sendEvent() {
+  static sendFeedback() async {
     // TODO: not implemented yet
   }
 
-  static sendTracking() {
-    // TODO: not implemented yet
+  static sendTracking(TrackingInfo trackingInfo, String trackingEvent) async {
+    var tracking = Map<String, Object>();
+    tracking['recipeId'] = trackingInfo.recipeId;
+    tracking['metadata'] = trackingInfo.metadata;
+    await _channel.invokeMethod('sendTracking', <String, dynamic>{
+      'trackingInfo': tracking,
+      'trackingEvent': trackingEvent
+    });
   }
 
   static enrollTestDevice(String deviceName) async {
@@ -88,25 +100,7 @@ class NearitSdk {
         'enrollTestDevice', <String, dynamic>{'deviceName': deviceName});
   }
 
-  static addProximityListener() {
-    // TODO: not implemented yet
-  }
-
-  static removeProximityListener() {
-    // TODO: not implemented yet
-  }
-
   static disableDefaultRangingNotifications() {
     _channel.invokeMethod('disableDefaultRangingNotifications');
   }
-
-  static setProximityNotificationIcon() {
-    // TODO: not implemented yet
-  }
-
-  static setPushNotificationIcon() {
-    // TODO: not implemented yet
-  }
-
-
 }
