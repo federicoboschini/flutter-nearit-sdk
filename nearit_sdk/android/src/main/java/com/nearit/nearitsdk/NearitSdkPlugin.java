@@ -19,9 +19,10 @@ import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.communication.TestEnrollListener;
 import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
-import it.near.sdk.reactions.Event;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
+import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
+import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.recipes.NearITEventHandler;
 import it.near.sdk.recipes.inbox.NotificationHistoryManager;
 import it.near.sdk.recipes.inbox.model.HistoryItem;
@@ -41,6 +42,9 @@ public class NearitSdkPlugin implements MethodCallHandler {
         private static final String PROFILE_ID = "profileId";
         private static final String USER_DATA_KEY = "userDataKey";
         private static final String USER_DATA_VALUE = "userDataValue";
+        private static final String FEEDBACK_ID = "feedbackId";
+        private static final String FEEDBACK_RATING = "feedbackRating";
+        private static final String FEEDBACK_COMMENT = "feedbackComment";
 
         private static final String START_RADAR = "startRadar";
         private static final String STOP_RADAR = "stopRadar";
@@ -110,7 +114,7 @@ public class NearitSdkPlugin implements MethodCallHandler {
                 optOut(result);
                 break;
             case SEND_EVENT:
-                sendEvent(call, result);
+                sendFeedback(call, result);
                 break;
             case SEND_TRACKING:
                 sendTracking(call);
@@ -259,8 +263,19 @@ public class NearitSdkPlugin implements MethodCallHandler {
         });
     }
 
-    private void sendEvent(final MethodCall call, final Result result) {
-        Event event = call.argument(EVENT);
+    private void sendFeedback(final MethodCall call, final Result result) {
+        LinkedHashMap<String, Object> bundledFeedback = call.argument(FEEDBACK_ID);
+        Integer rating = call.argument(FEEDBACK_RATING);
+        String comment = call.argument(FEEDBACK_COMMENT);
+
+        Feedback feedback = Utils.unbundleFeedback(bundledFeedback);
+
+        FeedbackEvent event = null;
+        if (rating != null && feedback != null) {
+            event = new FeedbackEvent(feedback, rating, comment);
+        } else {
+            result.error("Error sending feedback", "Can\'t unbundle rating",null);
+        }
         nearItManager.sendEvent(event, new NearITEventHandler() {
             @Override
             public void onSuccess() {
