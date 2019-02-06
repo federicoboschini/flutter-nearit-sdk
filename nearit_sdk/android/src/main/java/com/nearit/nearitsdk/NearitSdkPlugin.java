@@ -200,13 +200,21 @@ public class NearitSdkPlugin implements MethodCallHandler {
     private void setUserData(final MethodCall call) {
         String key = call.argument(USER_DATA_KEY);
         String value = call.argument(USER_DATA_VALUE);
-        nearItManager.setUserData(key, value);
+        if (key != null) {
+            nearItManager.setUserData(key, value);
+        } else {
+            Log.e(TAG, "NearIT :: Can\'t set user data. Key is null");
+        }
     }
 
     private void setUserDataMulti(final MethodCall call) {
         String key = call.argument(USER_DATA_KEY);
         NearMultipleChoiceDataPoint value = call.argument(USER_DATA_VALUE);
-        nearItManager.setUserData(key, value);
+        if (key != null) {
+            nearItManager.setUserData(key, value);
+        } else {
+            Log.e(TAG,"NearIT :: Can\'t set user data. Key is null" );
+        }
     }
 
     private void setBatchUserData(final MethodCall call) {
